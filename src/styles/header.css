@@ -1,0 +1,42 @@
+/* Header */
+.dashboard-projects-header {
+  display: flex;             
+  justify-content: space-between; 
+  padding: 10px 20px;        
+  background-color: #f5f5f5;  
+  border-radius: 8px;        
+}
+
+.dashboard-header.dark {
+  background-color: #374151;
+  border-bottom-color: #4b5563;
+}
+
+/* Header title */
+.dashboard-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 600; /* font-semibold */
+  color: #111827;
+}
+
+.dashboard-header.dark .dashboard-title {
+  color: #ffffff;
+}
+
+/* Notification badge */
+.dashboard-notification {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #fed7aa; /* light orange */
+  color: #c2410c; /* dark orange text */
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px; /* fully rounded */
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dashboard-header.dark .dashboard-notification {
+  background-color: #7c2d12;
+  color: #fcd34d;
+}
