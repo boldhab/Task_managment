@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faMoon, faSun, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,11 +12,14 @@ import ProjectModal from "../components/ProjectModal";
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
-  const [projects, setProjects] = useState([{ id: 1, name: "Project A" }]);
-  const [selectedProject, setSelectedProject] = useState(1);
-  const [tasks, setTasks] = useState([
+  const defaultProjects = [{ id: 1, name: "Project A" }];
+  const defaultTasks = [
     { id: 1, projectId: 1, title: "Task 1", completed: false, dueDate: "2025-10-25", priority: "High" },
-  ]);
+  ];
+
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
   const [showCompleted, setShowCompleted] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +28,41 @@ const Dashboard = () => {
   const [editingProject, setEditingProject] = useState(null);
   const [theme, setTheme] = useState("light");
   const [dueSoonCount, setDueSoonCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [dueFilter, setDueFilter] = useState("all");
+  const searchInputRef = useRef(null);
+
+  // Load data from localStorage
+  useEffect(() => {
+    const storedProjects = JSON.parse(localStorage.getItem("tm_projects") || "null");
+    const storedTasks = JSON.parse(localStorage.getItem("tm_tasks") || "null");
+    const storedSelected = JSON.parse(localStorage.getItem("tm_selected_project") || "null");
+
+    const initialProjects = Array.isArray(storedProjects) && storedProjects.length > 0
+      ? storedProjects
+      : defaultProjects;
+    const initialTasks = Array.isArray(storedTasks) && storedTasks.length > 0
+      ? storedTasks
+      : defaultTasks;
+
+    setProjects(initialProjects);
+    setTasks(initialTasks);
+    const fallbackProjectId = initialProjects[0]?.id || null;
+    setSelectedProject(storedSelected || fallbackProjectId);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("tm_projects", JSON.stringify(projects));
+  }, [projects]);
+
+  useEffect(() => {
+    localStorage.setItem("tm_tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem("tm_selected_project", JSON.stringify(selectedProject));
+  }, [selectedProject]);
 
   // Drag and reorder tasks
   const handleDragEnd = useCallback((result) => {
@@ -50,6 +88,29 @@ const Dashboard = () => {
   };
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      const tagName = document.activeElement?.tagName;
+      const isTyping = tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT";
+
+      if (event.key === "/") {
+        if (!isTyping) {
+          event.preventDefault();
+          searchInputRef.current?.focus();
+        }
+      }
+
+      if ((event.key === "n" || event.key === "N") && !isTyping) {
+        event.preventDefault();
+        setEditingTask(null);
+        setIsModalOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
 
   const handleEditTask = (task) => {
     setEditingTask(task);
@@ -124,9 +185,38 @@ const Dashboard = () => {
   }, [tasks]);
 
   const tasksForProject = tasks.filter(t => t.projectId === selectedProject);
-  const activeTasks = tasksForProject.filter(t => !t.completed);
-  const completedTasks = tasksForProject.filter(t => t.completed);
   const totalTasks = tasksForProject.length;
+
+  const filteredTasks = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    const now = new Date();
+
+    return tasksForProject.filter(task => {
+      const matchesQuery = !normalizedQuery || task.title.toLowerCase().includes(normalizedQuery);
+      const matchesPriority = priorityFilter === "all" || task.priority === priorityFilter;
+
+      let matchesDue = true;
+      if (dueFilter === "overdue") {
+        matchesDue = !!task.dueDate && new Date(task.dueDate) < now;
+      }
+      if (dueFilter === "7") {
+        matchesDue = !!task.dueDate && (new Date(task.dueDate) - now) / (1000 * 60 * 60 * 24) <= 7;
+      }
+      if (dueFilter === "30") {
+        matchesDue = !!task.dueDate && (new Date(task.dueDate) - now) / (1000 * 60 * 60 * 24) <= 30;
+      }
+      if (dueFilter === "none") {
+        matchesDue = !task.dueDate;
+      }
+
+      return matchesQuery && matchesPriority && matchesDue;
+    });
+  }, [tasksForProject, searchQuery, priorityFilter, dueFilter]);
+
+  const activeTasks = filteredTasks.filter(t => !t.completed);
+  const completedTasks = filteredTasks.filter(t => t.completed);
+  const visibleTasks = filteredTasks.length;
+  const hasActiveFilters = searchQuery || priorityFilter !== "all" || dueFilter !== "all";
 
   return (
     <div className={`dashboard ${theme === "dark" ? "dark" : ""}`}>
@@ -178,12 +268,70 @@ const Dashboard = () => {
               <div>
                 <h2>Tasks</h2>
                 <p className="dashboard-tasks-subtitle">
-                  {activeTasks.length} active · {completedTasks.length} completed · {totalTasks} total
+                  Showing {visibleTasks} of {totalTasks} tasks
                 </p>
               </div>
               <button className="btn btn-primary dashboard-add-task-btn" onClick={() => { setEditingTask(null); setIsModalOpen(true); }}>
                 <FontAwesomeIcon icon={faPlus} /> Add Task
               </button>
+            </div>
+
+            <div className="dashboard-filters">
+              <div className="filter-field">
+                <label className="filter-label" htmlFor="task-search">Search</label>
+                <input
+                  id="task-search"
+                  ref={searchInputRef}
+                  className="input"
+                  placeholder="Search tasks"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="filter-field">
+                <label className="filter-label" htmlFor="task-priority-filter">Priority</label>
+                <select
+                  id="task-priority-filter"
+                  className="select"
+                  value={priorityFilter}
+                  onChange={(e) => setPriorityFilter(e.target.value)}
+                >
+                  <option value="all">All</option>
+                  <option value="High">High</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+              <div className="filter-field">
+                <label className="filter-label" htmlFor="task-due-filter">Due date</label>
+                <select
+                  id="task-due-filter"
+                  className="select"
+                  value={dueFilter}
+                  onChange={(e) => setDueFilter(e.target.value)}
+                >
+                  <option value="all">All</option>
+                  <option value="overdue">Overdue</option>
+                  <option value="7">Next 7 days</option>
+                  <option value="30">Next 30 days</option>
+                  <option value="none">No due date</option>
+                </select>
+              </div>
+              {hasActiveFilters && (
+                <div className="filter-actions">
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setPriorityFilter("all");
+                      setDueFilter("all");
+                    }}
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="dashboard-active-tasks">
