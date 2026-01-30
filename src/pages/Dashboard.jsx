@@ -126,21 +126,25 @@ const Dashboard = () => {
   const tasksForProject = tasks.filter(t => t.projectId === selectedProject);
   const activeTasks = tasksForProject.filter(t => !t.completed);
   const completedTasks = tasksForProject.filter(t => t.completed);
+  const totalTasks = tasksForProject.length;
 
   return (
     <div className={`dashboard ${theme === "dark" ? "dark" : ""}`}>
       <div className="container">
         {/* Header */}
         <header className="dashboard-header">
-          <h1 className="dashboard-title">Task Manager</h1>
+          <div>
+            <h1 className="dashboard-title">Task Manager</h1>
+            <p className="dashboard-tasks-subtitle">Organize work by project and priority.</p>
+          </div>
           <div className="header-controls">
             {dueSoonCount > 0 && (
               <div className="dashboard-notification">
                 <FontAwesomeIcon icon={faBell} />
-                <span>{dueSoonCount} task{dueSoonCount > 1 ? "s" : ""} due soon!</span>
+                <span>Due soon: {dueSoonCount}</span>
               </div>
             )}
-            <button className="dashboard-theme-toggle" onClick={toggleTheme}>
+            <button className="btn btn-secondary dashboard-theme-toggle" onClick={toggleTheme}>
               <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} /> {theme === "light" ? "Dark Mode" : "Light Mode"}
             </button>
           </div>
@@ -169,10 +173,15 @@ const Dashboard = () => {
           </div>
 
           {/* Tasks */}
-          <div className="dashboard-tasks">
+          <div className="dashboard-tasks card">
             <div className="dashboard-tasks-header">
-              <h2>Tasks</h2>
-              <button className="dashboard-add-task-btn" onClick={() => { setEditingTask(null); setIsModalOpen(true); }}>
+              <div>
+                <h2>Tasks</h2>
+                <p className="dashboard-tasks-subtitle">
+                  {activeTasks.length} active · {completedTasks.length} completed · {totalTasks} total
+                </p>
+              </div>
+              <button className="btn btn-primary dashboard-add-task-btn" onClick={() => { setEditingTask(null); setIsModalOpen(true); }}>
                 <FontAwesomeIcon icon={faPlus} /> Add Task
               </button>
             </div>
@@ -192,8 +201,8 @@ const Dashboard = () => {
               <div className="dashboard-completed-tasks">
                 <div className="completed-header">
                   <h3>Completed Tasks</h3>
-                  <button className="dashboard-completed-toggle" onClick={() => setShowCompleted(!showCompleted)}>
-                    {showCompleted ? "Hide" : "Show"}
+                  <button className="btn btn-ghost dashboard-completed-toggle" onClick={() => setShowCompleted(!showCompleted)}>
+                    {showCompleted ? "Hide completed" : "Show completed"}
                   </button>
                 </div>
 
