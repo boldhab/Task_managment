@@ -1,76 +1,44 @@
-/* Main dashboard wrapper */
-.dashboard {
-  min-height: 100vh;
-  background-color: #f9fafb;
-  color: #111827;
-}
-
-/* Dark mode */
-.dashboard.dark {
-  background-color: #1f2937;
-  color: #ffffff;
-}
-
 /* Header */
 .dashboard-header {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
 }
 
-.dashboard-header.dark {
-  background-color: #374151;
-}
-
-/* Header title */
 .dashboard-title {
   font-size: 1.5rem;
-  font-weight: 700;
 }
 
-/* Notification badge */
+.header-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .dashboard-notification {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.5rem;
-  background-color: #fed7aa;
-  color: #c2410c;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: var(--warning-50);
+  color: var(--warning);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
 }
 
-.dashboard-notification.dark {
-  background-color: #7c2d12;
-  color: #fcd34d;
-}
-
-/* Theme toggle button */
 .dashboard-theme-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: #e5e7eb;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.dashboard-theme-toggle:hover {
-  background-color: #d1d5db;
-}
-
-.dashboard-theme-toggle.dark {
-  background-color: #4b5563;
-}
-
-.dashboard-theme-toggle.dark:hover {
-  background-color: #374151;
+  min-width: 140px;
 }
 
 /* Grid container */
@@ -80,79 +48,45 @@
   gap: 1.5rem;
 }
 
-@media(min-width: 1024px) {
+@media (min-width: 1024px) {
   .dashboard-grid {
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 320px 1fr;
+    align-items: start;
   }
-}
-
-/* Project list */
-.dashboard-projects {
-  /* Additional styles if needed */
 }
 
 /* Tasks container */
 .dashboard-tasks {
-  background-color: #ffffff;
   padding: 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.dashboard-tasks.dark {
-  background-color: #374151;
-}
-
-/* Tasks header */
 .dashboard-tasks-header {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
 }
 
-.dashboard-add-task-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #2563eb;
-  color: #ffffff;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.dashboard-tasks-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
-.dashboard-add-task-btn:hover {
-  background-color: #1d4ed8;
-}
-
-/* Active tasks section */
-.dashboard-active-tasks {
-  margin-bottom: 2rem;
-}
-
-/* Completed tasks section */
+.dashboard-active-tasks,
 .dashboard-completed-tasks {
   margin-top: 1.5rem;
 }
 
-/* Completed toggle */
+.completed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .dashboard-completed-toggle {
   font-size: 0.875rem;
-  color: #2563eb;
-  cursor: pointer;
-}
-
-.dashboard-completed-toggle:hover {
-  text-decoration: underline;
-}
-
-/* Modals */
-.task-modal {
-  /* Styles can be customized */
-}
-
-.project-modal {
-  /* Styles can be customized */
 }

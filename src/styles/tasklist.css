@@ -4,10 +4,10 @@
 .task-list-empty {
   text-align: center;
   padding: 2rem 1rem;
-  color: #6b7280;
-  background: white;
-  border-radius: 0.5rem;
-  border: 1px dashed #d1d5db;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border);
 }
 
 .empty-title {
@@ -26,8 +26,8 @@
 }
 
 .droppable-area.dragging-over {
-  background: #dbeafe;
-  border-radius: 0.5rem;
+  background: var(--primary-50);
+  border-radius: var(--radius-md);
 }
 
 /* Task item styles */
@@ -36,39 +36,39 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  background: var(--surface);
   margin-bottom: 0.5rem;
 }
 
 .task-item:hover:not(.dragging) {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-1);
 }
 
 .task-item.completed {
   opacity: 0.6;
   text-decoration: line-through;
-  background: #f9fafb;
+  background: var(--surface-muted);
 }
 
 .task-item.dragging {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  background: #dbeafe;
-  border-color: #93c5fd;
+  box-shadow: var(--shadow-2);
+  background: var(--primary-50);
+  border-color: var(--primary);
 }
 
 /* Drag handle */
 .drag-handle {
   flex-shrink: 0;
-  color: #9ca3af;
+  color: var(--text-muted);
   cursor: grab;
   transition: color 0.2s ease;
 }
 
 .drag-handle:hover {
-  color: #4b5563;
+  color: var(--text);
 }
 
 /* Checkbox */
@@ -76,13 +76,13 @@
   height: 1rem;
   width: 1rem;
   border-radius: 0.25rem;
-  border: 1px solid #d1d5db;
-  color: #2563eb;
+  border: 1px solid var(--border);
+  color: var(--primary);
 }
 
 .task-checkbox:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--focus);
 }
 
 /* Task content */
@@ -111,7 +111,7 @@
 }
 .task-title {
   font-weight: 500;
-  color: #111827;
+  color: var(--text);
   word-wrap: break-word;
 }
 .task-infomation{
@@ -138,17 +138,17 @@ gap:20px;
 }
 
 .due-date-overdue {
-  color: #dc2626;
+  color: var(--danger);
   font-weight: 600;
 }
 
 .due-date-soon {
-  color: #ea580c;
+  color: var(--warning);
   font-weight: 600;
 }
 
 .due-date-normal {
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 /* Priority badge */
@@ -160,18 +160,18 @@ gap:20px;
 }
 
 .priority-high {
-  color: #dc2626;
-  background: #fef2f2;
+  color: var(--danger);
+  background: var(--danger-50);
 }
 
 .priority-medium {
-  color: #ea580c;
-  background: #fff7ed;
+  color: var(--warning);
+  background: var(--warning-50);
 }
 
 .priority-low {
-  color: #16a34a;
-  background: #f0fdf4;
+  color: var(--success);
+  background: var(--success-50);
 }
 
 /* Action buttons */
@@ -189,22 +189,22 @@ gap:20px;
 
 .action-btn {
   padding: 0.375rem;
-  color: #6b7280;
-  border-radius: 0.25rem;
-  transition: all 0.2s ease;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.2s ease, color 0.2s ease;
   border: none;
   cursor: pointer;
   background: transparent;
 }
 
 .action-btn:hover {
-  background: #eff6ff;
-  color: #2563eb;
+  background: var(--primary-50);
+  color: var(--primary);
 }
 
 .action-btn.delete:hover {
-  background: #fef2f2;
-  color: #dc2626;
+  background: var(--danger-50);
+  color: var(--danger);
 }
 
 /* Font Awesome icon sizing */
@@ -215,9 +215,9 @@ gap:20px;
 
 /* Drag placeholder */
 .drag-placeholder {
-  background: #f3f4f6;
-  border: 2px dashed #d1d5db;
-  border-radius: 0.5rem;
+  background: var(--surface-muted);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
   margin: 0.25rem 0;
 }
 
@@ -239,6 +239,6 @@ gap:20px;
 /* Focus styles for accessibility */
 .action-btn:focus,
 .task-checkbox:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--focus);
 }
